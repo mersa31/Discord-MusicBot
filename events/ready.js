@@ -1,13 +1,26 @@
-module.exports = async (client) => {
-  (client.Ready = true),
-    client.user.setPresence({
-      status: client.botconfig.Presence.status, // You can show online, idle, and dnd
-      activity: {
-        name: client.botconfig.Presence.name,
-        type: client.botconfig.Presence.type,
-      },
-    });
-  client.Manager.init(client.user.id);
-  client.log("Successfully Logged in as " + client.user.tag); // You can change the text if you want, but DO NOT REMOVE "client.user.tag"
-  client.RegisterSlashCommands();
-};
+const client = require("../index");
+const { Collection } = require("discord.js")
+const fs = require("fs")
+
+client.on("ready", () => {
+console.log(`${client.user.tag} Bot Online!`)
+client.user.setActivity(`Raven #2022`)
+
+client.commands = new Collection();
+client.aliases = new Collection();
+fs.readdir("./commands/", (err, files) => {
+if (err) console.error(err);
+console.log(`${files.length} Total Command!`);
+files.forEach(f => {
+let props = require(`../commands/${f}`);
+    
+console.log(`${props.help.name} Named Command Online!`);
+    
+client.commands.set(props.help.name, props);
+props.conf.aliases.forEach(alias => {
+client.aliases.set(alias, props.help.name);
+});
+});
+});
+
+});
