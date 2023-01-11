@@ -1,7 +1,7 @@
 {
   "name": "Godzilla",
   "version": "4.0.0",
-  "description": "Godzilla V14 Formlu Başvuru Bot Altyapısı!",
+  "description": "V14 Formlu Destek Sistemi Altyapısı!",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"

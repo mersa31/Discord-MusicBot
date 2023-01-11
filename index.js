@@ -1,31 +1,30 @@
-const { Client, GatewayIntentBits, Partials, ButtonBuilder, ButtonStyle, ActionRowBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, InteractionType } = require("discord.js");
-const Discord = require("discord.js")
+const {PermissionsBitField, EmbedBuilder, ButtonStyle, Client, GatewayIntentBits, ChannelType, Partials, ActionRowBuilder, SelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, InteractionType, SelectMenuInteraction, ButtonBuilder } = require("discord.js");
 const config = require("./config.js");
 const db = require("croxydb")
 const client = new Client({
   partials: [
     Partials.Message, 
-    Partials.Channel,
-    Partials.GuildMember,
-    Partials.Reaction,
-    Partials.GuildScheduledEvent, 
+    Partials.Channel, 
+    Partials.GuildMember, 
+    Partials.Reaction, 
+    Partials.GuildScheduledEvent,
     Partials.User, 
     Partials.ThreadMember, 
   ],
   intents: [
     GatewayIntentBits.Guilds, 
-    GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.GuildBans,
+    GatewayIntentBits.GuildMembers, 
+    GatewayIntentBits.GuildBans, 
     GatewayIntentBits.GuildEmojisAndStickers,
-    GatewayIntentBits.GuildIntegrations, 
+    GatewayIntentBits.GuildIntegrations,
     GatewayIntentBits.GuildWebhooks, 
-    GatewayIntentBits.GuildInvites, 
+    GatewayIntentBits.GuildInvites,
     GatewayIntentBits.GuildVoiceStates, 
     GatewayIntentBits.GuildPresences, 
     GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildMessageReactions, 
     GatewayIntentBits.GuildMessageTyping, 
-    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.DirectMessages, 
     GatewayIntentBits.DirectMessageReactions, 
     GatewayIntentBits.DirectMessageTyping, 
     GatewayIntentBits.MessageContent, 
@@ -37,135 +36,210 @@ module.exports = client;
 require("./events/message.js")
 require("./events/ready.js")
 
-const modal = new ModalBuilder()
-.setCustomId('form')
-.setTitle('Godzilla - Başvuru Formu!')
-  const a1 = new TextInputBuilder()
-  .setCustomId('isim')
-  .setLabel('İsminiz?')
-  .setStyle(TextInputStyle.Paragraph) 
-  .setMinLength(2)
-  .setPlaceholder('Arda')
-  .setRequired(true)
-	const a2 = new TextInputBuilder() 
-	.setCustomId('yas')
-	.setLabel('Yaşınız Nedir?')
-  .setStyle(TextInputStyle.Paragraph)  
-	.setMinLength(1)
-	.setPlaceholder('15')
-	.setRequired(true)
-	const a3 = new TextInputBuilder() 
-	.setCustomId('biz')
-	.setLabel('Neden Biz?')
-  .setStyle(TextInputStyle.Paragraph)  
-	.setMinLength(1)
-	.setPlaceholder('Neden Bizimle Çalışmak İstiyorsun?')
-	.setRequired(true)
-	const a4 = new TextInputBuilder() 
-	.setCustomId('yetkili')
-	.setLabel('Daha Önce Bir Sunucuda Yetkili Oldun Mu?')
-	.setMinLength(1)
-  .setStyle(TextInputStyle.Paragraph)  
-	.setPlaceholder('Farklı bir sunucuda yetkili oldun mu?')
-	const a5 = new TextInputBuilder() 
-    .setCustomId('aciklama')
-    .setLabel('Eklemek İstediğin?')
-    .setMinLength(1)
-    .setStyle(TextInputStyle.Paragraph) 
-    .setPlaceholder('Ek olarak bir şey söylemek istiyorsan yazabilirsin.')
-    const row = new ActionRowBuilder().addComponents(a1);
-    const row2 = new ActionRowBuilder().addComponents(a2);
-    const row3 = new ActionRowBuilder().addComponents(a3);
-    const row4 = new ActionRowBuilder().addComponents(a4);
-    const row5 = new ActionRowBuilder().addComponents(a5);
-    modal.addComponents(row, row2, row3, row4, row5);
-  
-   
-client.on('interactionCreate', async (interaction) => {
-
-	if(interaction.customId === "başvuru"){
-    await interaction.showModal(modal);
-	}
-})
- 
-    client.on('interactionCreate', async interaction => {
-      if (interaction.type !== InteractionType.ModalSubmit) return;
-      if (interaction.customId === 'form') {
-
-  let kanal = db.fetch(`basvurulog_${interaction.guild.id}`)
-let rol = db.fetch(`basvururol_${interaction.guild.id}`)
-
-
-		const isim = interaction.fields.getTextInputValue('isim')
-		const yas = interaction.fields.getTextInputValue('yas')
-		const biz = interaction.fields.getTextInputValue('biz')
-		const yetkili = interaction.fields.getTextInputValue('yetkili')
-    const aciklama = interaction.fields.getTextInputValue('aciklama')
-	
-    const embed = new Discord.EmbedBuilder()
-    .setTitle("Yeni Başvuru Geldi!")
-    .setDescription(`Başvuran: **${interaction.user.tag}**\n\nİsim: **${isim}**\n\nYaş: **${yas}**\n\nNeden Biz? **${biz}**\n\nYetkili Olduğu Sunucular: **${yetkili}**\n\nAçıklama: **${aciklama}**         ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀`)
-    .setColor(0x0099FF)
-    const row = new Discord.ActionRowBuilder()
-    .addComponents(
-    new ButtonBuilder()
-    .setCustomId('evet')
-    .setLabel('Evet')
-    .setStyle(ButtonStyle.Success),
-    new ButtonBuilder()
-    .setCustomId("hayir")
-    .setLabel("Hayır")
-    .setStyle(ButtonStyle.Danger))
-  
-    
-    
-
-
-    await interaction.reply({ content: 'Başvurun gönderildi.', ephemeral: true });
-    client.channels.cache.get(kanal).send({embeds: [embed], components: [row]}).then(async m => {
-      db.set(`basvuru_${m.id}`, interaction.user.id)
-      })
-    }
-    })
-
-
-
-
-client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isButton()) return;
-
-if (interaction.customId == "evet") {
-  interaction.deferUpdate()
-  const data = await db.get(`basvuru_${interaction.message.id}`)
-  if(!data) return;
-const uye = data;
-  let log = db.fetch(`basvurukanal_${interaction.guild.id}`)
-  let rol = db.fetch(`basvururol_${interaction.guild.id}`)
- 
-  client.channels.cache.get(log).send(`<@${uye}> Adlı Kullanıcının Başvurusu Kabul Edildi Rolleri Verildi.`)
-interaction.guild.members.cache.get(uye).roles.add(rol)
-
-}
-})
-
-
-client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isButton()) return;
-
-if (interaction.customId == "hayir") {
-  interaction.deferUpdate()
-  const data = await db.get(`basvuru_${interaction.message.id}`)
-  if(!data) return;
-const uye = data;
-  let log = db.fetch(`basvurukanal_${interaction.guild.id}`)
-  
- 
-  client.channels.cache.get(log).send(`<@${uye}> Adlı Kullanıcının Başvurusu Red Edildi.`)
-
-}
-})
-  
-
 client.login(config.token)
 
 
+const modal = new ModalBuilder()
+.setCustomId('form')
+.setTitle('Godzilla - Destek Sistemi!')
+  const a1 = new TextInputBuilder()
+  .setCustomId('sebep')
+  .setLabel('Destek Açma Sebebiniz?')
+  .setStyle(TextInputStyle.Paragraph) 
+  .setMinLength(2)
+  .setPlaceholder('Destek Oluşturma Sebebiniz Nedir?')
+  .setRequired(true)
+  const row = new ActionRowBuilder().addComponents(a1);
+  
+  modal.addComponents(row);
+client.on('interactionCreate', async (interaction) => {
+
+	if(interaction.customId === "ticket"){
+    await interaction.showModal(modal);
+	}
+})  
+
+const mod = new ModalBuilder()
+.setCustomId('eklemenu')
+.setTitle('Godzilla - Destek Sistemi!')
+  const e = new TextInputBuilder()
+  .setCustomId('uyeid')
+  .setLabel('Kullanıcı ID')
+  .setStyle(TextInputStyle.Paragraph) 
+  .setMinLength(10)
+  .setPlaceholder('Eklemek istediğiniz kullanıcı ID girin.')
+  .setRequired(true)
+  const row2 = new ActionRowBuilder().addComponents(e);
+  
+  mod.addComponents(row2);
+client.on('interactionCreate', async (interaction) => {
+
+	if(interaction.customId === "ekle"){
+    await interaction.showModal(mod);
+	}
+})  
+
+const mod2 = new ModalBuilder()
+.setCustomId('eklemenu2')
+.setTitle('Godzilla - Destek Sistemi!')
+  const a = new TextInputBuilder()
+  .setCustomId('cikarid')
+  .setLabel('Kullanıcı ID')
+  .setStyle(TextInputStyle.Paragraph) 
+  .setMinLength(10)
+  .setPlaceholder('Çıkarmak istediğiniz kullanıcı ID girin.')
+  .setRequired(true)
+  const row3 = new ActionRowBuilder().addComponents(a);
+  
+  mod2.addComponents(row3);
+client.on('interactionCreate', async (interaction) => {
+
+	if(interaction.customId === "çıkar"){
+    await interaction.showModal(mod2);
+	}
+})  
+client.on('interactionCreate', async interaction => {
+  if (interaction.type !== InteractionType.ModalSubmit) return;
+  if (interaction.customId === 'form') {
+    const sebep = interaction.fields.getTextInputValue('sebep')
+  
+const row = new ActionRowBuilder()
+.addComponents( 
+  new SelectMenuBuilder()
+  .setCustomId('del')
+.setPlaceholder('Bilet Menüsü!')
+.addOptions([
+{
+label: 'Bileti Sil',
+description: 'Kanalı silersin!',
+emoji: "1002538609003470898",
+value: 'delete',
+},
+{
+label: "Panel",
+description: "Üye Ekleme Çıkarma Menüsü.",
+emoji: "984924491777998938",
+value: "panel"
+
+}
+])
+);
+
+  let data3 =  db.get("destek"+ interaction.guild.id)
+  let roleStaff = interaction.guild.roles.cache.get(data3.rolID)
+  let DejaUnChannel = interaction.guild.channels.cache.find(c => c.topic == interaction.user.id)
+              if (DejaUnChannel) return interaction.reply({content: 'Sunucuda zaten açık bir biletiniz var.', ephemeral: true})
+              interaction.guild.channels.create({
+              name: `ticket-${interaction.user.username}`,
+                type: ChannelType.GuildText,
+        
+                permissionOverwrites: [
+                  {   
+                      id: interaction.guild.id,
+                      deny: [PermissionsBitField.Flags.ViewChannel]
+                  },
+                  {
+                      id: interaction.user.id,
+                      allow: [PermissionsBitField.Flags.ViewChannel]
+                  },
+                  {
+                      id: roleStaff,
+                      allow: [PermissionsBitField.Flags.ViewChannel]
+                  }
+              ]
+            })
+            
+                  
+                  .then((c)=>{
+                 
+                      const i1 = new EmbedBuilder()
+                      .setTitle('Godzilla - Destek Sistemi')
+                      .setDescription(`Kullanıcı Destek Talebini **${sebep}** Sebebiyle Oluşturdu!\n\nDestek Oluşturan: ${interaction.user}`)
+                      .setColor(0x0099ff)
+                      c.send({embeds: [i1], content: `${roleStaff} | ${interaction.user}`, components: [row]})
+                      interaction.reply({content: `Biletiniz başarıyla açıldı. <#${c.id}>`, ephemeral: true})
+                  })
+          
+          }
+        })
+        client.on('interactionCreate', async interaction => {
+          if (!interaction.isSelectMenu()) return;
+          if(interaction.customId === "del") {
+            if (interaction.values[0] == "panel") {
+              await interaction.deferUpdate()
+const row2 = new ActionRowBuilder()
+.addComponents(
+new ButtonBuilder()
+.setLabel("Ekle")
+.setStyle(ButtonStyle.Success)
+.setCustomId("ekle"),
+new ButtonBuilder()
+.setLabel("Çıkar")
+.setStyle(ButtonStyle.Danger)
+.setCustomId("çıkar"),
+new ButtonBuilder()
+.setLabel("Sil")
+.setStyle(ButtonStyle.Secondary)
+.setCustomId("sil")
+)
+const embed = new EmbedBuilder()
+.setTitle("Godzilla - Kullanıcı Paneli!")
+.setDescription("Aşağıdaki butonlardan üye ekleyebilir veya çıkarabilirsin!")
+.setColor(0x0099ff)
+let message = await interaction.channel.messages.fetch(interaction.message.id)
+await message.edit({embeds: [embed], components: [row2]})
+          }
+        }
+        })
+        client.on('interactionCreate', async interaction => {
+          if (interaction.type !== InteractionType.ModalSubmit) return;
+          if (interaction.customId === 'eklemenu') {
+            const id = interaction.fields.getTextInputValue('uyeid')
+            const channel = interaction.channel
+                channel.permissionOverwrites.create(
+                  id, {ViewChannel: true}
+                  
+                  )
+                  interaction.reply({content: `<@${id}> Adlı Kullanıcı Başarıyla Destek Talebine Eklendi!`})
+                } else {
+                
+          }
+        })
+        client.on('interactionCreate', async interaction => {
+          if (interaction.type !== InteractionType.ModalSubmit) return;
+          if (interaction.customId === 'eklemenu2') {
+            const id = interaction.fields.getTextInputValue('cikarid')
+            const channel = interaction.channel
+                channel.permissionOverwrites.create(
+                  id, {ViewChannel: false}
+                  
+                  )
+                  interaction.reply({content: `<@${id}> Adlı Kullanıcı Başarıyla Destek Talebinden Atıldı!`})
+                } else {
+               
+          }
+        })
+        client.on('interactionCreate', async interaction => {
+        if (!interaction.isSelectMenu()) return;
+        if(interaction.customId === "del") {
+          if (interaction.values[0] == "delete") {
+            let log = db.fetch(`log_${interaction.guild.id}`)
+              const channel = interaction.channel
+              channel.delete();
+              client.channels.cache.get(log).send(`<@${interaction.user.id}> Adlı Kullanıcı **${interaction.channel.name}** Adlı Desteği Sildi!`)
+            
+          }
+        }
+        })
+        client.on('interactionCreate', async interaction => {
+          if (!interaction.isButton()) return;
+          if(interaction.customId === "sil") {
+              let log = db.fetch(`log_${interaction.guild.id}`)
+                const channel = interaction.channel
+                channel.delete();
+                client.channels.cache.get(log).send(`<@${interaction.user.id}> Adlı Kullanıcı **${interaction.channel.name}** Adlı Desteği Sildi!`)
+              
+            
+          }
+          })
+      

@@ -3,16 +3,12 @@ const config = require("../config.js")
 let prefix = config.prefix
 exports.run = async (client, message, args) => {
 
-  const menu = new EmbedBuilder()
-  .setTitle("Godzilla - Yardım Menüsü")
-  .setDescription(`${prefix}yardım\n${prefix}başvuru-log\n${prefix}başvuru-kanal\n${prefix}başvuru-rol\n${prefix}başvur`)
-  .setColor(0x0099FF)
-
-  
-  message.channel.send({
-    embeds: [menu]
-  });
-
+    const embed = new EmbedBuilder()
+    .setTitle("Godzilla - Yardım!")
+    .setDescription(`${prefix}ticket-yetkilisi\n${prefix}ticket-oluştur Buton Üzerinde Yazıcak Yazı + Embed Mesaj Yazısı\n${prefix}ticket-log`)
+    .setColor("#007fff")
+    .setTimestamp()
+    return message.channel.send({embeds : [embed]});
 
 };
 exports.conf = {
