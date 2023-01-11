@@ -1,7 +1,7 @@
 {
   "name": "Raven",
   "version": "4.0.0",
-  "description": "V14 Formlu Ve Menülü Rol Alma Sistemi!",
+  "description": "Raven sunucusu için yapılan v14 butonrol sistemi",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
